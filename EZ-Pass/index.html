@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EZ Pass</title>
+
+<style>
+body {
+  margin:0;
+  font-family: Arial;
+  color:white;
+  background: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957') no-repeat center center/cover;
+}
+
+.overlay {
+  background: rgba(0,0,0,0.75);
+  min-height:100vh;
+  padding:15px;
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  padding:15px;
+  border-radius:15px;
+  backdrop-filter: blur(10px);
+  margin-top:10px;
+}
+
+input, select, textarea {
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border:none;
+  border-radius:8px;
+}
+
+button {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  background:#00c6ff;
+  color:white;
+}
+
+.hidden { display:none; }
+
+.back {
+  font-size:22px;
+  cursor:pointer;
+}
+
+/* invalid highlight */
+.invalid {
+  border:2px solid red;
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay">
+
+<div class="back" onclick="backAction()">⬅</div>
+
+<h1>EZ Pass</h1>
+
+<!-- LOGIN -->
+<div id="login" class="card">
+  <h3>Login</h3>
+  <input id="luser" placeholder="Username">
+  <input id="lpass" type="password" placeholder="Password">
+  <button onclick="go('options')">Login</button>
+  <button onclick="go('signup')">Signup</button>
+</div>
+
+<!-- SIGNUP -->
+<div id="signup" class="card hidden">
+  <h3>Signup</h3>
+
+  <input id="suser" placeholder="Username (letters + numbers only)">
+  <input id="spass" type="password" placeholder="Password (8+ chars, letter, number, symbol)">
+
+  <button onclick="validateSignup()">Create Account</button>
+</div>
+
+<!-- OPTIONS -->
+<div id="options" class="card hidden">
+  <h3>Options</h3>
+  <button onclick="go('form')">New Application</button>
+  <button onclick="resume()">Process Login</button>
+</div>
+
+<!-- FORM -->
+<div id="form" class="card hidden">
+
+<h3>Application Form</h3>
+
+<select id="type" onchange="toggleFields()">
+<option>Student</option>
+<option>Employee</option>
+<option>General</option>
+</select>
+
+<!-- ONLY LETTERS NAME -->
+<input id="name" placeholder="Full Name (letters only)" oninput="onlyLetters(this)">
+
+<input placeholder="Father/Guardian Name">
+<input type="date">
+<input placeholder="Age">
+
+<select>
+<option>Male</option>
+<option>Female</option>
+<option>Others</option>
+</select>
+
+<input placeholder="Aadhar Number">
+<input placeholder="Mobile Number">
+<textarea placeholder="Full Address"></textarea>
+
+<input type="file">
+
+<div id="studentFields">
+<input placeholder="School/College Name">
+<input placeholder="Course">
+<select>
+<option>Govt</option>
+<option>Private</option>
+</select>
+<input type="file">
+</div>
+
+<div id="employeeFields" class="hidden">
+<input placeholder="Profession">
+</div>
+
+<input placeholder="Boarding Point">
+<input placeholder="Destination Point">
+<input placeholder="Route Details">
+
+<select>
+<option>Monthly</option>
+<option>3 Months</option>
+<option>6 Months</option>
+<option>9 Months</option>
+<option>Yearly</option>
+</select>
+
+<input type="file">
+<input placeholder="Nearest RTC Depot">
+
+<button onclick="save()">Save & Exit</button>
+<button onclick="go('payment')">Proceed to Payment</button>
+
+</div>
+
+<!-- PAYMENT -->
+<div id="payment" class="card hidden">
+<h3>Payment</h3>
+<p>Scan QR to Pay</p>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=EZPASS">
+<button onclick="pay()">I Have Paid</button>
+</div>
+
+<!-- SUCCESS -->
+<div id="success" class="card hidden">
+<h3>Success</h3>
+<p>Your application will be updated within 3–7 days</p>
+</div>
+
+</div>
+
+<script>
+
+let current = "login";
+let savedData = {};
+
+// NAVIGATION
+function go(id){
+  document.getElementById(current).classList.add("hidden");
+  document.getElementById(id).classList.remove("hidden");
+  current = id;
+}
+
+// BACK BUTTON (NEW CONFIRM FLOW)
+function backAction(){
+
+  let confirmExit = confirm("Confirm to exit?");
+  if(!confirmExit) return;
+
+  let saveChoice = confirm("OK = Save & Exit\nCancel = Don't Save");
+
+  if(saveChoice){
+    save();
+    go("login");
+  } else {
+    savedData = {};
+    go("login");
+  }
+}
+
+// SAVE
+function save(){
+  savedData.name = document.getElementById("name").value;
+  savedData.type = document.getElementById("type").value;
+  alert("Saved Successfully");
+}
+
+// RESUME
+function resume(){
+  if(savedData.name){
+    go("form");
+    document.getElementById("name").value = savedData.name;
+    document.getElementById("type").value = savedData.type;
+    toggleFields();
+  } else {
+    alert("No saved data found");
+  }
+}
+
+// PAYMENT
+function pay(){
+  go("success");
+}
+
+// CONDITIONAL FIELDS
+function toggleFields(){
+  let type = document.getElementById("type").value;
+
+  document.getElementById("studentFields").classList.add("hidden");
+  document.getElementById("employeeFields").classList.add("hidden");
+
+  if(type === "Student"){
+    document.getElementById("studentFields").classList.remove("hidden");
+  }
+  if(type === "Employee"){
+    document.getElementById("employeeFields").classList.remove("hidden");
+  }
+}
+
+// ONLY LETTERS FOR NAME
+function onlyLetters(input){
+  input.value = input.value.replace(/[^a-zA-Z\s]/g,'');
+}
+
+// SIGNUP VALIDATION
+function validateSignup(){
+
+  let u = document.getElementById("suser").value;
+  let p = document.getElementById("spass").value;
+
+  let userRegex = /^[a-zA-Z0-9]+$/;
+  let passRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  if(!userRegex.test(u)){
+    alert("Username must contain only letters and numbers");
+    return;
+  }
+
+  if(!passRegex.test(p)){
+    alert("Password must be 8+ chars with letter, number & symbol");
+    return;
+  }
+
+  alert("Signup Successful");
+  go("login");
+}
+
+</script>
+
+</body>
+</html>
