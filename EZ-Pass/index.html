@@ -4,58 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EZ Pass</title>
 
-<style>
-body {
-  margin:0;
-  font-family: Arial;
-  color:white;
-  background: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957') no-repeat center center/cover;
-}
-
-.overlay {
-  background: rgba(0,0,0,0.75);
-  min-height:100vh;
-  padding:15px;
-}
-
-.card {
-  background: rgba(255,255,255,0.1);
-  padding:15px;
-  border-radius:15px;
-  backdrop-filter: blur(10px);
-  margin-top:10px;
-}
-
-input, select, textarea {
-  width:100%;
-  padding:10px;
-  margin:6px 0;
-  border:none;
-  border-radius:8px;
-}
-
-button {
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:10px;
-  background:#00c6ff;
-  color:white;
-}
-
-.hidden { display:none; }
-
-.back {
-  font-size:22px;
-  cursor:pointer;
-}
-
-/* invalid highlight */
-.invalid {
-  border:2px solid red;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -66,7 +15,6 @@ button {
 
 <h1>EZ Pass</h1>
 
-<!-- LOGIN -->
 <div id="login" class="card">
   <h3>Login</h3>
   <input id="luser" placeholder="Username">
@@ -75,7 +23,6 @@ button {
   <button onclick="go('signup')">Signup</button>
 </div>
 
-<!-- SIGNUP -->
 <div id="signup" class="card hidden">
   <h3>Signup</h3>
 
@@ -85,14 +32,12 @@ button {
   <button onclick="validateSignup()">Create Account</button>
 </div>
 
-<!-- OPTIONS -->
 <div id="options" class="card hidden">
   <h3>Options</h3>
   <button onclick="go('form')">New Application</button>
   <button onclick="resume()">Process Login</button>
 </div>
 
-<!-- FORM -->
 <div id="form" class="card hidden">
 
 <h3>Application Form</h3>
@@ -103,9 +48,7 @@ button {
 <option>General</option>
 </select>
 
-<!-- ONLY LETTERS NAME -->
 <input id="name" placeholder="Full Name (letters only)" oninput="onlyLetters(this)">
-
 <input placeholder="Father/Guardian Name">
 <input type="date">
 <input placeholder="Age">
@@ -156,7 +99,6 @@ button {
 
 </div>
 
-<!-- PAYMENT -->
 <div id="payment" class="card hidden">
 <h3>Payment</h3>
 <p>Scan QR to Pay</p>
@@ -164,7 +106,6 @@ button {
 <button onclick="pay()">I Have Paid</button>
 </div>
 
-<!-- SUCCESS -->
 <div id="success" class="card hidden">
 <h3>Success</h3>
 <p>Your application will be updated within 3–7 days</p>
@@ -172,103 +113,7 @@ button {
 
 </div>
 
-<script>
-
-let current = "login";
-let savedData = {};
-
-// NAVIGATION
-function go(id){
-  document.getElementById(current).classList.add("hidden");
-  document.getElementById(id).classList.remove("hidden");
-  current = id;
-}
-
-// BACK BUTTON (NEW CONFIRM FLOW)
-function backAction(){
-
-  let confirmExit = confirm("Confirm to exit?");
-  if(!confirmExit) return;
-
-  let saveChoice = confirm("OK = Save & Exit\nCancel = Don't Save");
-
-  if(saveChoice){
-    save();
-    go("login");
-  } else {
-    savedData = {};
-    go("login");
-  }
-}
-
-// SAVE
-function save(){
-  savedData.name = document.getElementById("name").value;
-  savedData.type = document.getElementById("type").value;
-  alert("Saved Successfully");
-}
-
-// RESUME
-function resume(){
-  if(savedData.name){
-    go("form");
-    document.getElementById("name").value = savedData.name;
-    document.getElementById("type").value = savedData.type;
-    toggleFields();
-  } else {
-    alert("No saved data found");
-  }
-}
-
-// PAYMENT
-function pay(){
-  go("success");
-}
-
-// CONDITIONAL FIELDS
-function toggleFields(){
-  let type = document.getElementById("type").value;
-
-  document.getElementById("studentFields").classList.add("hidden");
-  document.getElementById("employeeFields").classList.add("hidden");
-
-  if(type === "Student"){
-    document.getElementById("studentFields").classList.remove("hidden");
-  }
-  if(type === "Employee"){
-    document.getElementById("employeeFields").classList.remove("hidden");
-  }
-}
-
-// ONLY LETTERS FOR NAME
-function onlyLetters(input){
-  input.value = input.value.replace(/[^a-zA-Z\s]/g,'');
-}
-
-// SIGNUP VALIDATION
-function validateSignup(){
-
-  let u = document.getElementById("suser").value;
-  let p = document.getElementById("spass").value;
-
-  let userRegex = /^[a-zA-Z0-9]+$/;
-  let passRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-  if(!userRegex.test(u)){
-    alert("Username must contain only letters and numbers");
-    return;
-  }
-
-  if(!passRegex.test(p)){
-    alert("Password must be 8+ chars with letter, number & symbol");
-    return;
-  }
-
-  alert("Signup Successful");
-  go("login");
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
