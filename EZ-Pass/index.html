@@ -63,20 +63,24 @@
 <input placeholder="Mobile Number">
 <textarea placeholder="Full Address"></textarea>
 
-<input type="file">
+<label>Upload Photo</label>
+<input type="file" accept="image/*,.pdf">
 
 <div id="studentFields">
-<input placeholder="School/College Name">
-<input placeholder="Course">
-<select>
-<option>Govt</option>
-<option>Private</option>
-</select>
-<input type="file">
+  <input placeholder="School/College Name">
+  <input placeholder="Course">
+  
+  <select>
+    <option>Govt</option>
+    <option>Private</option>
+  </select>
+
+  <label>Upload Student ID / Bonafide Certificate</label>
+  <input type="file" accept="image/*,.pdf">
 </div>
 
 <div id="employeeFields" class="hidden">
-<input placeholder="Profession">
+  <input placeholder="Profession">
 </div>
 
 <input placeholder="Boarding Point">
@@ -91,7 +95,9 @@
 <option>Yearly</option>
 </select>
 
-<input type="file">
+<label>Upload Address Proof (Aadhaar / Any Govt ID)</label>
+<input type="file" accept="image/*,.pdf">
+
 <input placeholder="Nearest RTC Depot">
 
 <button onclick="save()">Save & Exit</button>
